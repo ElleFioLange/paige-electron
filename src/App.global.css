@@ -4,9 +4,14 @@
  */
 
 @import 'antd/dist/antd.css';
+@font-face {
+  font-family: Jost;
+  src: url('Jost-VF.ttf')
+}
 
 * {
   user-select: none;
+  font-family: Jost
 }
 
 #components-layout-demo-top-side-2 .logo {
@@ -22,13 +27,6 @@
   margin: 16px 0 16px 24px;
 }
 
-.paige-canvas {
-  margin: 0;
-  border: 1px solid #d9d9d9;
-  overflow: scroll
-}
-
-.paige-canvas:hover {
-  border: 1px solid #40a9ff;
-  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+#pdf-controls {
+  display: none;
 }
