@@ -1,8 +1,8 @@
 // eslint-disable-next-line import/no-duplicates
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { Layout, Menu, Breadcrumb, Button, AutoComplete, Input } from 'antd';
+import React from 'react';
+import { Layout, Menu, Breadcrumb, Button } from 'antd';
 import DocViewer, { DocViewerRenderers, IDocument } from 'react-doc-viewer';
+import AuComp from './Autocomplete';
 
 import {
   FolderOpenOutlined,
@@ -12,22 +12,26 @@ import {
   FileAddOutlined,
 } from '@ant-design/icons';
 
-import './App.global.css';
+import '../App.global.css';
 
 const { SubMenu } = Menu;
 const { Content, Sider, Footer } = Layout;
 
-class Interface extends React.Component {
+interface IDocUIProps {
+  currentDoc: IDocument
+}
+
+class DocUI extends React.Component<IDocUIProps> {
 
   render() {
     return (
       <Layout>
-        <Sider width={250} style={{ background: "#fffbe6", padding: '24px 0 0' }} collapsible >
+        <Sider width={250} style={{ background: "#fff8d4", padding: '24px 0 0' }} collapsible >
           <Menu
             mode="inline"
             defaultSelectedKeys={['1']}
             defaultOpenKeys={['sub1']}
-            style={{ height: '100%', borderRight: 0, background: '#fffbe6' }}
+            style={{ height: '100%', borderRight: 0, background: '#fff8d4' }}
           >
             <SubMenu key="search" icon={<SearchOutlined />} title="Search">
               <Menu.Item key="search-all">Search All Documents</Menu.Item>
@@ -51,17 +55,9 @@ class Interface extends React.Component {
         </Sider>
         <Layout style={{ background: '#fffef0' }}>
           <Layout style={{ padding: '24px', background: '#fffef0' }}>
-            <AutoComplete
-              // options={options}
-              // style={{ maxWidth: '700px' }}
-              // onSelect={onSelect}
-              // onSearch={onSearch}
-              // onChange={onChange}
-            >
-              <Input.Search size="large" placeholder="Search this document" />
-            </AutoComplete>
+            <AuComp style={{ maxWidth: '700px' }} placeholder="Search this document" />
             <Breadcrumb style={{ margin: '16px 0' }}>
-              {this.props.currentDoc.uri.split('/').map((dir) => {
+              {this.props.currentDoc.uri.split('/').map((dir: string) => {
                 if (dir === '.') {
                   return <Breadcrumb.Item>Home</Breadcrumb.Item>
                 } else {
@@ -90,4 +86,4 @@ class Interface extends React.Component {
   };
 };
 
-export default Interface
+export default DocUI

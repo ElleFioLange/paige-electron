@@ -6,7 +6,7 @@
 @import 'antd/dist/antd.css';
 @font-face {
   font-family: Jost;
-  src: url('Jost-VF.ttf')
+  src: url('../assets/Jost-VF.ttf')
 }
 
 * {

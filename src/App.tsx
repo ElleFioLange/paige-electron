@@ -1,24 +1,27 @@
 // eslint-disable-next-line import/no-duplicates
 import React from 'react';
-import Interface from './Interface'
+import DocUI from './components/DocUI'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Layout, Menu, Button } from 'antd';
 import { PlusSquareOutlined } from '@ant-design/icons';
 
 import './App.global.css';
 
-import logo from './icon.svg';
+import logo from '../assets/icon.svg';
 
 const { Header } = Layout;
 
 const openDocs = [
-  { name: 'Doc 1', uri: './test1.pdf' },
-  { name: 'Doc 2', uri: './test2.pdf' },
+  { name: 'Doc 1', uri: '../assets/test1.pdf' },
+  { name: 'Doc 2', uri: '../assets/test2.pdf' },
+  { name: 'Img 1', uri: '../assets/test3.jpg' },
 ];
 
-class Main extends React.Component {state={ docIdx: 0 }
+class Main extends React.Component {
 
-  handleClick(idx) {
+  state={ docIdx: 0 }
+
+  handleClick(idx: any) {
     this.setState({ docIdx: idx })
   }
 
@@ -32,7 +35,6 @@ class Main extends React.Component {state={ docIdx: 0 }
           <Menu
             theme="light"
             mode="horizontal"
-            defaultSelectedKeys={['2']}
             style={{ background: 'none' }}
             onClick={(item) => this.handleClick(item.key)}
           >
@@ -52,7 +54,7 @@ class Main extends React.Component {state={ docIdx: 0 }
             />
           </Menu>
         </Header>
-        <Interface currentDoc={openDocs[this.state.docIdx]}/>
+        <DocUI currentDoc={openDocs[this.state.docIdx]}/>
       </Layout>
 
     );
