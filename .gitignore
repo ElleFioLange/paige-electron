@@ -1,5 +1,5 @@
 #Test PDFs
-.pdf
+*.pdf
 
 # Logs
 logs
