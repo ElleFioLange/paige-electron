@@ -2,7 +2,8 @@
 import React from 'react';
 import { Layout, Menu, Breadcrumb, Button } from 'antd';
 import DocViewer, { DocViewerRenderers, IDocument } from 'react-doc-viewer';
-import AuComp from './Autocomplete';
+import AuComp from './AuComp';
+import KeepAlive from 'react-activation';
 
 import {
   FolderOpenOutlined,
@@ -18,7 +19,7 @@ const { SubMenu } = Menu;
 const { Content, Sider, Footer } = Layout;
 
 interface IDocUIProps {
-  currentDoc: IDocument
+  doc: IDocument
 }
 
 class DocUI extends React.Component<IDocUIProps> {
@@ -57,7 +58,7 @@ class DocUI extends React.Component<IDocUIProps> {
           <Layout style={{ padding: '24px', background: '#fffef0' }}>
             <AuComp style={{ maxWidth: '700px' }} placeholder="Search this document" />
             <Breadcrumb style={{ margin: '16px 0' }}>
-              {this.props.currentDoc.uri.split('/').map((dir: string) => {
+              {this.props.doc.uri.split('/').map((dir: string) => {
                 if (dir === '.') {
                   return <Breadcrumb.Item>Home</Breadcrumb.Item>
                 } else {
@@ -65,18 +66,20 @@ class DocUI extends React.Component<IDocUIProps> {
                 }
               })}
             </Breadcrumb>
-            <Content style={{ overflow: 'auto' }}>
-              <DocViewer
-                documents={[this.props.currentDoc]}
-                pluginRenderers={DocViewerRenderers}
-                config={{
-                  header: {
-                    disableHeader: true,
-                  },
-                }}
-              />
-              </Content>
-            </Layout>
+            <Content style={{ overflow: 'auto', maxHeight: '100%' }}>
+              {/* <KeepAlive style={{ display: 'flex' }}> */}
+                <DocViewer
+                  documents={[this.props.doc]}
+                  pluginRenderers={DocViewerRenderers}
+                  config={{
+                    header: {
+                      disableHeader: true,
+                    },
+                  }}
+                />
+              {/* </KeepAlive> */}
+            </Content>
+          </Layout>
           <Footer style={{ height: '48px', background: "#002140", display: 'flex', alignItems: 'center' }}>
             <Button type='ghost' icon={<HighlightOutlined style={{ color: 'white' }} />} />
           </Footer>
