@@ -1,0 +1,1 @@
+Have to set node_modules/react-doc-viewer/plugins/pdf/state/reducer.js -> exports.initialPDFState.paginated to false

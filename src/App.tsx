@@ -1,6 +1,5 @@
 import React from 'react';
-import { HashRouter, Link } from 'react-router-dom';
-import CacheRoute, { CacheSwitch } from 'react-router-cache-route';
+import { HashRouter, Switch, Route, Link } from 'react-router-dom';
 import DocUI from './components/DocUI'
 import { Layout, Menu, Button } from 'antd';
 import { PlusSquareOutlined } from '@ant-design/icons';
@@ -18,10 +17,12 @@ const openDocs = [
 
 interface IHeadProps {
   docNames: string[],
-  curDocIdx?: number,
 }
 
 class Head extends React.Component<IHeadProps> {
+  state = {
+    curDocIdx: null,
+  }
 
   render() {
     return (
@@ -34,7 +35,13 @@ class Head extends React.Component<IHeadProps> {
             theme='light'
             mode='horizontal'
             style={{ background: 'none' }}
-            selectedKeys={this.props.curDocIdx ? [`${this.props.curDocIdx}`] : []}
+            selectedKeys={this.state.curDocIdx ? [`${this.state.curDocIdx}`] : []}
+            onClick={({ key }) => {
+              console.log(key.split('-')[2])
+              if (key !== "new-tab") {
+                this.setState({ curDocIdx: parseInt(key.split('-')[2])})
+              }
+            }}
           >
             <img
               src={logo}
@@ -42,10 +49,9 @@ class Head extends React.Component<IHeadProps> {
               height="40px"
               style={{ padding: '0 30px 0 43px', fill: '#002140' }}
             />
-            <Link to='/'>Home</Link>
             {this.props.docNames.map((name, idx) => {
               return (
-                <Menu.Item key={idx}>
+                <Menu.Item key={`nav-menu-${idx}`}>
                   <Link to={`/${name}`}>
                     {name}
                   </Link>
@@ -53,6 +59,7 @@ class Head extends React.Component<IHeadProps> {
               );
             })}
             <Button
+              key="new-tab"
               icon={<PlusSquareOutlined style={{ color: 'white' }} />}
               size="large"
               style={{ margin: '0 20px', background: '#002140' }}
@@ -69,14 +76,14 @@ export default function App() {
   return (
     <HashRouter>
       <Head docNames={openDocs.map((doc) => doc.name)}>
-        <CacheSwitch>
-          <CacheRoute exact path='/' render={() => <div>Hello!</div>}/>
+        <Switch>
+          <Route exact path='/' render={() => <div>Hello!</div>}/>
           {openDocs.map((docu) => {
             return (
-              <CacheRoute key={`cr-${docu.name}`} exact path={`/${docu.name}`} render={() => <DocUI doc={docu}/>} />
+              <Route key={`cr-${docu.name}`} exact path={`/${docu.name}`} render={() => <DocUI doc={docu}/>} />
             )
           })}
-        </CacheSwitch>
+        </Switch>
       </Head>
     </HashRouter>
   )
