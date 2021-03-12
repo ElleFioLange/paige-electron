@@ -1,13 +1,13 @@
 import React from 'react';
 import { Layout, Menu, Breadcrumb, Tabs } from 'antd';
-import AuComp from './components/AuComp';
+// import AutoComp from './components/AutoComp';
 import DocViewer, { DocViewerRenderers } from 'react-doc-viewer';
 import { SearchOutlined, EditOutlined, FolderOpenOutlined, FileAddOutlined } from '@ant-design/icons';
 
 import './App.global.css';
 import logo from '../assets/icon.svg';
 
-const { Header, Footer, Sider, Content } = Layout;
+const { Header, Sider } = Layout;
 const { TabPane } = Tabs;
 const { SubMenu } = Menu;
 
@@ -17,7 +17,7 @@ const openDocs = [
   { name: 'doc3', uri: '../assets/test3.jpg' },
 ];
 
-function App(curDocIdx) {
+function App() {
 
   return (
     <Layout style={{ height: '100vh' }}>
@@ -65,51 +65,37 @@ function App(curDocIdx) {
           </Menu>
         </Sider>
         <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-          <Tabs tabPosition='bottom' style={{ position: 'absolute', width: '100%', height: '100%', overflow: 'scroll' }} >
+          <Tabs tabBarStyle={{ height: "49px", backgroundColor: "#002140", padding: '0 60px', margin: '0' }} tabPosition='bottom' style={{ position: 'absolute', width: '100%', height: '100%' }} >
             {openDocs.map((doc, idx) => {
               return (
-                <TabPane tab={doc.name} key={idx} style={{ maxHeight: '100%' }}>
-                  <div style={{ padding: '24px', maxHeight: '100%' }}>
-                    <Breadcrumb style={{ marginBottom: '16px' }}>
-                      {doc.uri.split('/').map((dir: string) => {
-                        if (dir === '.') {
-                          return <Breadcrumb.Item key="home">Home</Breadcrumb.Item>;
-                        }
-                        return <Breadcrumb.Item key={dir}>{dir}</Breadcrumb.Item>;
-                      })}
-                    </Breadcrumb>
-                    <div style={{ overflow: 'auto', height: '100%' }}>
-                      <DocViewer
-                        documents={[doc]}
-                        pluginRenderers={DocViewerRenderers}
-                        config={{
-                          header: {
-                            disableHeader: true,
-                          },
-                        }}
-                        style={{
-                          boxShadow: 'inset -2vw -2vw 3vw #d4d4d4',
-                          borderRadius: '10px',
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                    {/* </KeepAlive> */}
+                <TabPane tab={doc.name} key={idx} style={{ height: '100%' }}>
+                  <Breadcrumb style={{ marginBottom: '16px' }}>
+                    {doc.uri.split('/').map((dir: string) => {
+                      if (dir === '.') {
+                        return <Breadcrumb.Item key="home">Home</Breadcrumb.Item>;
+                      }
+                      return <Breadcrumb.Item key={dir}>{dir}</Breadcrumb.Item>;
+                    })}
+                  </Breadcrumb>
+                  <DocViewer
+                    documents={[doc]}
+                    pluginRenderers={DocViewerRenderers}
+                    config={{
+                      header: {
+                        disableHeader: true,
+                      },
+                    }}
+                    style={{
+                      boxShadow: 'inset -2vw -2vw 3vw #d4d4d4',
+                      borderRadius: '10px',
+                    }}
+                  />
                 </TabPane>
               );
             })}
           </Tabs>
         </div>
       </Layout>
-      {/* <Footer
-        style={{
-          height: '48px',
-          background: '#002140',
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      > */}
     </Layout>
   );
 };

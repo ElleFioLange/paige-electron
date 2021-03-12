@@ -9,7 +9,7 @@ import {
   SearchOutlined,
   FileAddOutlined,
 } from '@ant-design/icons';
-import AuComp from './AuComp';
+import AutoComp from './AutoComp';
 
 import '../App.global.css';
 
@@ -34,7 +34,7 @@ function DocUI(doc: IDocument) {
               return <Breadcrumb.Item key={dir}>{dir}</Breadcrumb.Item>;
             })}
           </Breadcrumb>
-          <AuComp
+          <AutoComp
             style={{ maxWidth: '700px' }}
             placeholder="Search this document"
           />

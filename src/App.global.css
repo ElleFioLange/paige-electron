@@ -27,6 +27,16 @@
   margin: 16px 0 16px 24px;
 }
 
+.ant-tabs-content-holder {
+  padding: 24px;
+  overflow: scroll;
+  background-color: #fffef0;
+}
+
+.ant-tabs-tab-btn {
+  color: white
+}
+
 /* #pdf-controls {
   display: none;
 } */
