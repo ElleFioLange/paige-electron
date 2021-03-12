@@ -1,13 +1,15 @@
 import React from 'react';
-import { HashRouter, Switch, Route, Link } from 'react-router-dom';
-import DocUI from './components/DocUI'
-import { Layout, Menu, Button } from 'antd';
-import { PlusSquareOutlined } from '@ant-design/icons';
+import { Layout, Menu, Breadcrumb, Tabs } from 'antd';
+import AuComp from './components/AuComp';
+import DocViewer, { DocViewerRenderers } from 'react-doc-viewer';
+import { SearchOutlined, EditOutlined, FolderOpenOutlined, FileAddOutlined } from '@ant-design/icons';
 
 import './App.global.css';
 import logo from '../assets/icon.svg';
 
-const { Header } = Layout;
+const { Header, Footer, Sider, Content } = Layout;
+const { TabPane } = Tabs;
+const { SubMenu } = Menu;
 
 const openDocs = [
   { name: 'doc1', uri: '../assets/test1.pdf' },
@@ -15,73 +17,98 @@ const openDocs = [
   { name: 'doc3', uri: '../assets/test3.jpg' },
 ];
 
-interface IHeadProps {
-  docNames: string[],
-}
+function App(curDocIdx) {
 
-class Head extends React.Component<IHeadProps> {
-  state = {
-    curDocIdx: null,
-  }
-
-  render() {
-    return (
-      <Layout style={{ height: '100vh' }}>
-        <Header
-          className="header"
-          style={{ background: '#fff1b8', padding: '0' }}
+  return (
+    <Layout style={{ height: '100vh' }}>
+      <Header
+        className="header"
+        style={{ background: '#fff1b8', padding: '0', display: 'flex', alignItems: 'center' }}
+      >
+        <img
+          src={logo}
+          alt="PAIGE Logo"
+          height="40px"
+          style={{ padding: '0 30px 0 43px', fill: '#002140' }}
+        />
+      </Header>
+      <Layout>
+        <Sider
+          width={250}
+          style={{ background: '#fff8d4', padding: '24px 0 0' }}
+          collapsible
         >
           <Menu
-            theme='light'
-            mode='horizontal'
-            style={{ background: 'none' }}
-            selectedKeys={this.state.curDocIdx ? [`${this.state.curDocIdx}`] : []}
-            onClick={({ key }) => {
-              if (key !== "new-tab") {
-                this.setState({ curDocIdx: key })
-              }
-            }}
+            mode="inline"
+            defaultSelectedKeys={['1']}
+            defaultOpenKeys={['sub1']}
+            style={{ height: '100%', borderRight: 0, background: '#fff8d4' }}
           >
-            <img
-              src={logo}
-              alt="PAIGE Logo"
-              height="40px"
-              style={{ padding: '0 30px 0 43px', fill: '#002140' }}
-            />
-            {this.props.docNames.map((name, idx) => {
+            <SubMenu key="search" icon={<SearchOutlined />} title="Search">
+              <Menu.Item key="search-all">Search All Documents</Menu.Item>
+              <Menu.Item key="new-group">+ New Group</Menu.Item>
+            </SubMenu>
+            <SubMenu key="edit" icon={<EditOutlined />} title="Edit">
+              <Menu.Item key="new-edit">+ New Edit</Menu.Item>
+              <Menu.ItemGroup key="edits" title="Edits">
+                <Menu.Item key="edit1">Edit 1</Menu.Item>
+                <Menu.Item key="edit2">Edit 2</Menu.Item>
+                <Menu.Item key="edit3">Edit 3</Menu.Item>
+              </Menu.ItemGroup>
+            </SubMenu>
+            <Menu.Item key="open" icon={<FolderOpenOutlined />}>
+              Show file
+            </Menu.Item>
+            <Menu.Item key="upload" icon={<FileAddOutlined />}>
+              Add file
+            </Menu.Item>
+          </Menu>
+        </Sider>
+        <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+          <Tabs tabPosition='bottom' style={{ position: 'absolute', width: '100%', height: '100%' }} >
+            {openDocs.map((doc, idx) => {
               return (
-                <Menu.Item key={idx}>
-                  { this.state.curDocIdx != idx ? <Link to={`/${name}`}>{name}</Link> : name }
-                </Menu.Item>
+                <TabPane tab={doc.name} key={idx}>
+                  <Breadcrumb style={{ margin: '16px 0' }}>
+                    {doc.uri.split('/').map((dir: string) => {
+                      if (dir === '.') {
+                        return <Breadcrumb.Item key="home">Home</Breadcrumb.Item>;
+                      }
+                      return <Breadcrumb.Item key={dir}>{dir}</Breadcrumb.Item>;
+                    })}
+                  </Breadcrumb>
+                    <div style={{ overflow: 'auto' }}>
+                    <DocViewer
+                      documents={[doc]}
+                      pluginRenderers={DocViewerRenderers}
+                      config={{
+                        header: {
+                          disableHeader: true,
+                        },
+                      }}
+                      style={{
+                        boxShadow: 'inset -2vw -2vw 3vw #d4d4d4',
+                        borderRadius: '10px',
+                      }}
+                    />
+                  </div>
+                    {/* </KeepAlive> */}
+                </TabPane>
               );
             })}
-            <Button
-              key="new-tab"
-              icon={<PlusSquareOutlined style={{ color: 'white' }} />}
-              size="large"
-              style={{ margin: '0 20px', background: '#002140' }}
-            />
-          </Menu>
-        </Header>
-        {this.props.children}
+          </Tabs>
+        </div>
       </Layout>
-    );
-  };
+      {/* <Footer
+        style={{
+          height: '48px',
+          background: '#002140',
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      > */}
+    </Layout>
+  );
 };
 
-export default function App() {
-  return (
-    <HashRouter>
-      <Head docNames={openDocs.map((doc) => doc.name)}>
-        <Switch>
-          <Route exact path='/' render={() => <div>Hello!</div>}/>
-          {openDocs.map((docu) => {
-            return (
-              <Route key={`cr-${docu.name}`} exact path={`/${docu.name}`} render={() => DocUI(docu)} />
-            )
-          })}
-        </Switch>
-      </Head>
-    </HashRouter>
-  )
-};
+export default App;

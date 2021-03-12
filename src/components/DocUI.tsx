@@ -19,37 +19,6 @@ const { Content, Sider, Footer } = Layout;
 function DocUI(doc: IDocument) {
   return (
     <Layout>
-      <Sider
-        width={250}
-        style={{ background: '#fff8d4', padding: '24px 0 0' }}
-        collapsible
-      >
-        <Menu
-          mode="inline"
-          defaultSelectedKeys={['1']}
-          defaultOpenKeys={['sub1']}
-          style={{ height: '100%', borderRight: 0, background: '#fff8d4' }}
-        >
-          <SubMenu key="search" icon={<SearchOutlined />} title="Search">
-            <Menu.Item key="search-all">Search All Documents</Menu.Item>
-            <Menu.Item key="new-group">+ New Group</Menu.Item>
-          </SubMenu>
-          <SubMenu key="edit" icon={<EditOutlined />} title="Edit">
-            <Menu.Item key="new-edit">+ New Edit</Menu.Item>
-            <Menu.ItemGroup key="edits" title="Edits">
-              <Menu.Item key="edit1">Edit 1</Menu.Item>
-              <Menu.Item key="edit2">Edit 2</Menu.Item>
-              <Menu.Item key="edit3">Edit 3</Menu.Item>
-            </Menu.ItemGroup>
-          </SubMenu>
-          <Menu.Item key="open" icon={<FolderOpenOutlined />}>
-            Show file
-          </Menu.Item>
-          <Menu.Item key="upload" icon={<FileAddOutlined />}>
-            Add file
-          </Menu.Item>
-        </Menu>
-      </Sider>
       <Layout>
         <Layout
           style={{
