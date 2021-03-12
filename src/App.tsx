@@ -65,33 +65,36 @@ function App(curDocIdx) {
           </Menu>
         </Sider>
         <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-          <Tabs tabPosition='bottom' style={{ position: 'absolute', width: '100%', height: '100%' }} >
+          <Tabs tabPosition='bottom' style={{ position: 'absolute', width: '100%', height: '100%', overflow: 'scroll' }} >
             {openDocs.map((doc, idx) => {
               return (
-                <TabPane tab={doc.name} key={idx}>
-                  <Breadcrumb style={{ margin: '16px 0' }}>
-                    {doc.uri.split('/').map((dir: string) => {
-                      if (dir === '.') {
-                        return <Breadcrumb.Item key="home">Home</Breadcrumb.Item>;
-                      }
-                      return <Breadcrumb.Item key={dir}>{dir}</Breadcrumb.Item>;
-                    })}
-                  </Breadcrumb>
-                    <div style={{ overflow: 'auto' }}>
-                    <DocViewer
-                      documents={[doc]}
-                      pluginRenderers={DocViewerRenderers}
-                      config={{
-                        header: {
-                          disableHeader: true,
-                        },
-                      }}
-                      style={{
-                        boxShadow: 'inset -2vw -2vw 3vw #d4d4d4',
-                        borderRadius: '10px',
-                      }}
-                    />
+                <TabPane tab={doc.name} key={idx} style={{ maxHeight: '100%' }}>
+                  <div style={{ padding: '24px', maxHeight: '100%' }}>
+                    <Breadcrumb style={{ marginBottom: '16px' }}>
+                      {doc.uri.split('/').map((dir: string) => {
+                        if (dir === '.') {
+                          return <Breadcrumb.Item key="home">Home</Breadcrumb.Item>;
+                        }
+                        return <Breadcrumb.Item key={dir}>{dir}</Breadcrumb.Item>;
+                      })}
+                    </Breadcrumb>
+                    <div style={{ overflow: 'auto', height: '100%' }}>
+                      <DocViewer
+                        documents={[doc]}
+                        pluginRenderers={DocViewerRenderers}
+                        config={{
+                          header: {
+                            disableHeader: true,
+                          },
+                        }}
+                        style={{
+                          boxShadow: 'inset -2vw -2vw 3vw #d4d4d4',
+                          borderRadius: '10px',
+                        }}
+                      />
+                    </div>
                   </div>
+
                     {/* </KeepAlive> */}
                 </TabPane>
               );
