@@ -37,9 +37,8 @@ class Head extends React.Component<IHeadProps> {
             style={{ background: 'none' }}
             selectedKeys={this.state.curDocIdx ? [`${this.state.curDocIdx}`] : []}
             onClick={({ key }) => {
-              console.log(key.split('-')[2])
               if (key !== "new-tab") {
-                this.setState({ curDocIdx: parseInt(key.split('-')[2])})
+                this.setState({ curDocIdx: key })
               }
             }}
           >
@@ -51,10 +50,8 @@ class Head extends React.Component<IHeadProps> {
             />
             {this.props.docNames.map((name, idx) => {
               return (
-                <Menu.Item key={`nav-menu-${idx}`}>
-                  <Link to={`/${name}`}>
-                    {name}
-                  </Link>
+                <Menu.Item key={idx}>
+                  { this.state.curDocIdx != idx ? <Link to={`/${name}`}>{name}</Link> : name }
                 </Menu.Item>
               );
             })}
