@@ -59,9 +59,9 @@ class DocUI extends React.Component<IDocUIProps> {
             <Breadcrumb style={{ margin: '16px 0' }}>
               {this.props.doc.uri.split('/').map((dir: string) => {
                 if (dir === '.') {
-                  return <Breadcrumb.Item>Home</Breadcrumb.Item>
+                  return <Breadcrumb.Item key='bc-home'>Home</Breadcrumb.Item>
                 } else {
-                  return <Breadcrumb.Item>{dir}</Breadcrumb.Item>
+                  return <Breadcrumb.Item key={`bc-${dir}`}>{dir}</Breadcrumb.Item>
                 }
               })}
             </Breadcrumb>

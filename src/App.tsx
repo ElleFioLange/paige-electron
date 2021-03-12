@@ -1,5 +1,6 @@
 import React from 'react';
-import { HashRouter, Switch, Route, Link } from 'react-router-dom';
+import { HashRouter, Link } from 'react-router-dom';
+import CacheRoute, { CacheSwitch } from 'react-router-cache-route';
 import DocUI from './components/DocUI'
 import { Layout, Menu, Button } from 'antd';
 import { PlusSquareOutlined } from '@ant-design/icons';
@@ -68,15 +69,14 @@ export default function App() {
   return (
     <HashRouter>
       <Head docNames={openDocs.map((doc) => doc.name)}>
-        <Switch>
-          <Route path='/' render={() => <div>Hello!</div>}/>
+        <CacheSwitch>
+          <CacheRoute exact path='/' render={() => <div>Hello!</div>}/>
           {openDocs.map((docu) => {
             return (
-              <><div>what up!</div>
-                <Route path={`/${docu.name}`} render={() => <DocUI doc={docu} />} /></>
+              <CacheRoute key={`cr-${docu.name}`} exact path={`/${docu.name}`} render={() => <DocUI doc={docu}/>} />
             )
           })}
-        </Switch>
+        </CacheSwitch>
       </Head>
     </HashRouter>
   )

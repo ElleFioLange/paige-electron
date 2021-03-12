@@ -5,13 +5,13 @@
 
 @import 'antd/dist/antd.css';
 @font-face {
-  font-family: Jost;
-  src: url('../assets/Jost-VF.ttf')
+  font-family: "Jost";
+  src: url('../assets/Jost-VF.ttf') format('ttf');
 }
 
 * {
   user-select: none;
-  font-family: Jost
+  font-family: "Jost";
 }
 
 #components-layout-demo-top-side-2 .logo {
