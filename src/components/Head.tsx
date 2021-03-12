@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout, Menu, Button } from 'antd';
 import { PlusSquareOutlined } from '@ant-design/icons';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import '../App.global.css';
 import logo from '../../assets/icon.svg';

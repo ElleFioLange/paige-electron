@@ -3,7 +3,6 @@ import React from 'react';
 import { Layout, Menu, Breadcrumb, Button } from 'antd';
 import DocViewer, { DocViewerRenderers, IDocument } from 'react-doc-viewer';
 import AuComp from './AuComp';
-import KeepAlive from 'react-activation';
 
 import {
   FolderOpenOutlined,
