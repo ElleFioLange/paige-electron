@@ -77,7 +77,7 @@ export default function App() {
           <Route exact path='/' render={() => <div>Hello!</div>}/>
           {openDocs.map((docu) => {
             return (
-              <Route key={`cr-${docu.name}`} exact path={`/${docu.name}`} render={() => <DocUI doc={docu}/>} />
+              <Route key={`cr-${docu.name}`} exact path={`/${docu.name}`} render={() => DocUI(docu)} />
             )
           })}
         </Switch>
