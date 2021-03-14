@@ -6,7 +6,7 @@
 @import 'antd/dist/antd.css';
 @font-face {
   font-family: "Jost";
-  src: url('../assets/Jost-VF.ttf') format('ttf');
+  src: url('../assets/Jost-400-Book.ttf');
 }
 
 * {
@@ -20,6 +20,15 @@
   height: 31px;
   margin: 16px 24px 16px 0;
   background: rgba(255, 255, 255, 0.3);
+}
+
+/* #proxy-renderer {
+  box-shadow: inset -2vw -2vw 3vw #d4d4d4;
+  border-radius: 10px;
+} */
+
+.ant-menu {
+  background-color: black;
 }
 
 .ant-row-rtl #components-layout-demo-top-side-2 .logo {

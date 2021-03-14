@@ -1,8 +1,9 @@
-import React from 'react';
-import { Layout, Menu, Breadcrumb, Tabs } from 'antd';
-// import AutoComp from './components/AutoComp';
+import React, { useState, useRef } from 'react';
+import { Layout, Menu, Breadcrumb, Tabs, Card } from 'antd';
+import AutoComp from './components/AutoComp';
 import DocViewer, { DocViewerRenderers } from 'react-doc-viewer';
 import { SearchOutlined, EditOutlined, FolderOpenOutlined, FileAddOutlined } from '@ant-design/icons';
+import { DocSider, SearchSider } from './components/Siders';
 
 import './App.global.css';
 import logo from '../assets/icon.svg';
@@ -10,14 +11,18 @@ import logo from '../assets/icon.svg';
 const { Header, Sider } = Layout;
 const { TabPane } = Tabs;
 const { SubMenu } = Menu;
-
-const openDocs = [
-  { name: 'doc1', uri: '../assets/test1.pdf' },
-  { name: 'doc2', uri: '../assets/test2.pdf' },
-  { name: 'doc3', uri: '../assets/test3.jpg' },
-];
+const { Meta } = Card;
 
 function App() {
+
+  const openDocs = [
+    { name: 'doc1', uri: '../assets/test1.pdf' },
+    { name: 'doc2', uri: '../assets/test2.pdf' },
+    { name: 'doc3', uri: '../assets/test3.jpg' },
+  ];
+
+  const [collapsed, setCollapsed] = useState(true)
+  const [curPane, setCurPane] = useState('search')
 
   return (
     <Layout style={{ height: '100vh' }}>
@@ -29,47 +34,35 @@ function App() {
           src={logo}
           alt="PAIGE Logo"
           height="40px"
-          style={{ padding: '0 30px 0 43px', fill: '#002140' }}
+          style={{ padding: '0 25px' }}
         />
+        <AutoComp placeholder='Search all documents' style={{ width: '60vw' }} />
       </Header>
       <Layout>
-        <Sider
-          width={250}
-          style={{ background: '#fff8d4', padding: '24px 0 0' }}
-          collapsible
-        >
-          <Menu
-            mode="inline"
-            defaultSelectedKeys={['1']}
-            defaultOpenKeys={['sub1']}
-            style={{ height: '100%', borderRight: 0, background: '#fff8d4' }}
-          >
-            <SubMenu key="search" icon={<SearchOutlined />} title="Search">
-              <Menu.Item key="search-all">Search All Documents</Menu.Item>
-              <Menu.Item key="new-group">+ New Group</Menu.Item>
-            </SubMenu>
-            <SubMenu key="edit" icon={<EditOutlined />} title="Edit">
-              <Menu.Item key="new-edit">+ New Edit</Menu.Item>
-              <Menu.ItemGroup key="edits" title="Edits">
-                <Menu.Item key="edit1">Edit 1</Menu.Item>
-                <Menu.Item key="edit2">Edit 2</Menu.Item>
-                <Menu.Item key="edit3">Edit 3</Menu.Item>
-              </Menu.ItemGroup>
-            </SubMenu>
-            <Menu.Item key="open" icon={<FolderOpenOutlined />}>
-              Show file
-            </Menu.Item>
-            <Menu.Item key="upload" icon={<FileAddOutlined />}>
-              Add file
-            </Menu.Item>
-          </Menu>
-        </Sider>
+        {curPane === 'search' ? SearchSider(collapsed, setCollapsed) : (curPane != 'files' ? DocSider(collapsed, setCollapsed) : null)}
         <div style={{ width: '100%', height: '100%', position: 'relative' }}>
-          <Tabs tabBarStyle={{ height: "49px", backgroundColor: "#002140", padding: '0 60px', margin: '0' }} tabPosition='bottom' style={{ position: 'absolute', width: '100%', height: '100%' }} >
-            {openDocs.map((doc, idx) => {
-              return (
-                <TabPane tab={doc.name} key={idx} style={{ height: '100%' }}>
-                  <Breadcrumb style={{ marginBottom: '16px' }}>
+          <Tabs onChange={(key) => setCurPane(key)} tabBarStyle={{ height: "49px", backgroundColor: "#0c304d", padding: '0 24px', margin: '0' }} tabPosition='bottom' style={{ position: 'absolute', width: '100%', height: '100%' }} >
+            <TabPane tab='Search' key='search' style={{ height: '100%' }} forceRender>
+              <div style={{ display: 'flex', flexWrap: 'wrap'}}>
+                {openDocs.map((doc) =>
+                  <Card style={{ flexGrow: 1, margin: '8px', padding: '8px', minWidth: '25vw', }}>
+                    <Meta title={doc.name} description='placeholder' />
+                  </Card>
+                )}
+              </div>
+            </TabPane>
+            <TabPane tab='Files' key='files' style={{ height: '100%' }} forceRender>
+              <div style={{ display: 'flex', flexWrap: 'wrap'}}>
+                {openDocs.map((doc) =>
+                  <Card style={{ flexGrow: 1, margin: '8px', padding: '8px', minWidth: '25vw', }}>
+                    <Meta title={doc.name} description='placeholder' />
+                  </Card>
+                )}
+              </div>
+            </TabPane>
+            {openDocs.map((doc, idx) =>
+                <TabPane tab={doc.name} key={idx} style={{ height: '100%' }} forceRender>
+                  <Breadcrumb style={{ marginBottom: '16px', marginTop: '-8px' }}>
                     {doc.uri.split('/').map((dir: string) => {
                       if (dir === '.') {
                         return <Breadcrumb.Item key="home">Home</Breadcrumb.Item>;
@@ -91,8 +84,7 @@ function App() {
                     }}
                   />
                 </TabPane>
-              );
-            })}
+            )}
           </Tabs>
         </div>
       </Layout>
