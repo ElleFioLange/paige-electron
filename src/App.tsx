@@ -1,13 +1,16 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useState } from 'react';
-import { Layout, Breadcrumb, Tabs, Card, Tree } from 'antd';
+import { Layout, Breadcrumb, Tabs, Card, Tree, Menu } from 'antd';
 import {
+  EditOutlined,
+  FileAddOutlined,
   FileJpgOutlined,
   FileOutlined,
   FilePdfOutlined,
   FolderOpenOutlined,
   FolderOutlined,
+  SearchOutlined,
 } from '@ant-design/icons';
 import DocViewer, { DocViewerRenderers } from 'react-doc-viewer';
 import AutoComp from './components/AutoComp';
@@ -17,10 +20,11 @@ import FileSystem from './utils/Filesystem';
 import './App.global.css';
 import logo from '../assets/icon.svg';
 
-const { Header } = Layout;
+const { Header, Sider } = Layout;
 const { TabPane } = Tabs;
 const { Meta } = Card;
 const { DirectoryTree } = Tree;
+const { SubMenu } = Menu;
 
 const openDocs = [
   {
@@ -119,7 +123,7 @@ function App() {
   }
 
   return (
-    <Layout style={{ height: '100vh', position: 'relative' }}>
+    <Layout style={{ height: '100vh' }}>
       <Header
         className="header"
         style={{
@@ -141,7 +145,7 @@ function App() {
           style={{ width: '60vw' }}
         />
       </Header>
-      <Layout style={{ height: '100%' }}>
+      <Layout>
         {siderSwitch(curPane)}
         <div style={{ width: '100%', height: '100%', position: 'relative' }}>
           <Tabs
@@ -213,7 +217,7 @@ function App() {
                 tab={doc.name}
                 key={idx}
                 style={{ height: '100%' }}
-                forceRender
+                // forceRender
               >
                 <Breadcrumb style={{ marginBottom: '16px', marginTop: '-8px' }}>
                   {doc.uri.split('/').map((dir: string) => {
@@ -246,3 +250,4 @@ function App() {
 }
 
 export default App;
+
