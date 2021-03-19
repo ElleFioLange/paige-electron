@@ -150,7 +150,7 @@ class Dir extends Item {
 }
 
 export default class FileSystem {
-  #self = new Dir('root');
+  #self = new Dir('home');
 
   #sortFn = (a) => a;
 
@@ -162,93 +162,59 @@ export default class FileSystem {
     return this.#self;
   }
 
-  get name() {
-    return this.root.name;
-  }
-
   get json() {
-    return this.#sortFn(this.root.content).map((item) => {
-      if (item.ext) {
-        return this.#readJsonF(item);
-      }
-      return this.#readJsonD(item);
-    });
-  }
-
-  get copy() {
-    const fsCopy = new FileSystem();
-
-    this.root.content.forEach((item) => {
-      const itemCopy = item.copy;
-      itemCopy.name = item.name;
-      fsCopy.insertItem(itemCopy);
-    });
-
-    return fsCopy;
+    return [this.#readJsonD(this.root)];
   }
 
   getItem(path) {
     const p = path.split('/').splice(1);
 
-    let curItem = this.root;
+    let item = this.root;
 
     p.forEach((name) => {
-      curItem = curItem.getItem(name);
+      item = item.getItem(name);
     });
 
-    return curItem;
+    return item;
   }
 
-  #insertItem = (item, parentPath) => {
+  insertItem = (item, parentPath) => {
     const dir = this.getItem(parentPath);
     dir.insertItem(item);
   };
 
-  pathProcess(path) {
-    const p = path.split('/');
-    const name = p.pop();
-    const parentPath = p.join('/');
+  removeItem(path) {
+    const item = this.getItem(path);
+    item.parent.removeItem(item.name);
+  }
 
-    return [name, parentPath];
+  moveItem(path, newParPath) {
+    const item = this.getItem(path);
+    const parent = this.getItem(newParPath);
+
+    item.parent.removeItem(item.name);
+    parent.insertItem(item);
+  }
+
+  renameItem(path, newName) {
+    const item = this.getItem(path);
+    const { parent } = item;
+
+    parent.removeItem(item.name);
+    item.name = newName;
+    parent.insertItem(item);
   }
 
   createFile(name, ext, parentPath) {
     const file = new File(name, ext);
 
-    this.#insertItem(file, parentPath);
+    this.insertItem(file, parentPath);
   }
 
   createDir(name, parentPath) {
     const dir = new Dir(name);
 
-    this.#insertItem(dir, parentPath);
-  }
-
-  removeItem(name, parentPath) {
-    const dir = this.getItem(parentPath);
-    dir.removeItem(name);
-  }
-
-  moveItem(curPath, newPath) {
-    const [curName, curParPath] = this.pathProcess(curPath);
-    const [newName, newParPath] = this.pathProcess(newPath);
-
-    const item = this.getItem(curPath);
-    this.removeItem(curName, curParPath);
-    item.name = newName;
-    this.#insertItem(item, newParPath);
-  }
-
-  duplicateItem(path, newName = '') {
-    const item = this.getItem(path);
-    const [name, parentPath] = this.pathProcess(path);
-    const { copy } = item;
-
-    if (newName) {
-      copy.name = newName;
-    }
-
-    this.#insertItem(copy, parentPath);
+    this.insertItem(dir, parentPath);
   }
 
   #loadJsonF = (json) => {
@@ -269,6 +235,18 @@ export default class FileSystem {
     return dir;
   };
 
+  loadJson(array) {
+    array.forEach((item) => {
+      if (item.ext) {
+        const f = this.#loadJsonF(item);
+        this.root.insertItem(f);
+      } else {
+        const d = this.#loadJsonD(item);
+        this.root.insertItem(d);
+      }
+    });
+  }
+
   #readJsonF = (file) => {
     return { title: file.name, key: file.path, ext: file.ext, fav: file.fav };
   };
@@ -286,50 +264,13 @@ export default class FileSystem {
       }),
     };
   };
-
-  loadJson(array) {
-    array.forEach((item) => {
-      if (item.ext) {
-        const f = this.#loadJsonF(item);
-        this.root.insertItem(f);
-      } else {
-        const d = this.#loadJsonD(item);
-        this.root.insertItem(d);
-      }
-    });
-  }
 }
 
-const testJson = [
-  {
-    name: 'folder1',
-    fav: false,
-    children: [
-      { name: 'file1', fav: false, ext: 'pdf' },
-      { name: 'file2', fav: true, ext: 'doc' },
-      { name: 'file3', fav: true, ext: 'pdf' },
-      {
-        name: 'folder2',
-        fav: true,
-        children: [
-          { name: 'file1', fav: false, ext: 'pptx' },
-          { name: 'file2', fav: false, ext: 'txt' },
-        ],
-      },
-    ],
-  },
-  { name: 'file1', fav: true, ext: 'pdf' },
-  {
-    name: 'folder2',
-    fav: false,
-    children: [
-      { name: 'file1', fav: false, ext: 'pdf' },
-      { name: 'folder3', fav: false, children: [] },
-    ],
-  },
-];
-
 const fs = new FileSystem();
-fs.loadJson(testJson);
 
-console.log(fs.content);
+fs.createFile('foo', 'pdf', 'root');
+console.log(fs.root.content);
+fs.createDir('bar', 'root');
+fs.moveItem('root/foo', 'root/bar');
+console.log(fs.root.content);
+console.log(fs.root.content[0].content[0].name);

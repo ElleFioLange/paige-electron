@@ -21,7 +21,7 @@ const { Header } = Layout;
 const { TabPane } = Tabs;
 const { Meta } = Card;
 const { DirectoryTree } = Tree;
-const fileSystem = new FileSystem();
+
 
 const openDocs = [
   {
@@ -44,297 +44,60 @@ const openDocs = [
   },
 ];
 
-// const treeData = [
-//   {
-//     title: 'folder1',
-//     key: 2,
-//     fav: false,
-//     children: [
-//       { title: 'file1', key: 3, fav: false, ext: 'pdf' },
-//       { title: 'file2', key: 4, fav: true, ext: 'doc' },
-//       { title: 'file3', key: 5, fav: true, ext: 'pdf' },
-//       {
-//         title: 'folder2',
-//         key: 6,
-//         fav: true,
-//         children: [
-//           { title: 'file1', key: 7, fav: false, ext: 'pptx' },
-//           { title: 'file2', key: 8, fav: false, ext: 'txt' },
-//         ],
-//       },
-//     ],
-//   },
-//   { title: 'file1', key: 9, fav: true, ext: 'pdf' },
-//   {
-//     title: 'folder2',
-//     key: 10,
-//     fav: false,
-//     children: [
-//       { title: 'file1', key: 11, fav: false, ext: 'pdf' },
-//       { title: 'folder3', key: 12, fav: false, children: [] },
-//     ],
-//   },
-// ];
-
 const testJson = [
   {
-    name: 'folder1',
+    name: 'a',
     fav: false,
     children: [
-      { name: 'file1', fav: false, ext: 'pdf' },
-      { name: 'file2', fav: true, ext: 'doc' },
-      { name: 'file3', fav: true, ext: 'pdf' },
+      { name: 'b', fav: false, ext: 'pdf' },
+      { name: 'c', fav: true, ext: 'doc' },
+      { name: 'd', fav: true, ext: 'pdf' },
       {
-        name: 'folder2',
+        name: 'e',
         fav: true,
         children: [
-          { name: 'file1', fav: false, ext: 'pptx' },
-          { name: 'file2', fav: false, ext: 'txt' },
+          { name: 'f', fav: false, ext: 'pptx' },
+          { name: 'g', fav: false, ext: 'txt' },
         ],
       },
     ],
   },
-  { name: 'file1', fav: true, ext: 'pdf' },
+  { name: 'h', fav: true, ext: 'pdf' },
   {
-    name: 'folder2',
+    name: 'i',
     fav: false,
     children: [
-      { name: 'file1', fav: false, ext: 'pdf' },
-      { name: 'folder3', fav: false, children: [] },
+      { name: 'j', fav: false, ext: 'pdf' },
+      { name: 'k', fav: false, children: [] },
     ],
   },
-  {
-    name: 'foalder1',
-    fav: false,
-    children: [
-      { name: 'file1', fav: false, ext: 'pdf' },
-      { name: 'file2', fav: true, ext: 'doc' },
-      { name: 'file3', fav: true, ext: 'pdf' },
-      {
-        name: 'folder2',
-        fav: true,
-        children: [
-          { name: 'file1', fav: false, ext: 'pptx' },
-          { name: 'file2', fav: false, ext: 'txt' },
-        ],
-      },
-    ],
-  },
-  { name: 'filae1', fav: true, ext: 'pdf' },
-  {
-    name: 'foldaer2',
-    fav: false,
-    children: [
-      { name: 'file1', fav: false, ext: 'pdf' },
-      { name: 'folder3', fav: false, children: [] },
-    ],
-  },
-  {
-    name: 'foldber1',
-    fav: false,
-    children: [
-      { name: 'file1', fav: false, ext: 'pdf' },
-      { name: 'file2', fav: true, ext: 'doc' },
-      { name: 'file3', fav: true, ext: 'pdf' },
-      {
-        name: 'folder2',
-        fav: true,
-        children: [
-          { name: 'file1', fav: false, ext: 'pptx' },
-          { name: 'file2', fav: false, ext: 'txt' },
-        ],
-      },
-    ],
-  },
-  { name: 'fbile1', fav: true, ext: 'pdf' },
-  {
-    name: 'folbder2',
-    fav: false,
-    children: [
-      { name: 'file1', fav: false, ext: 'pdf' },
-      { name: 'folder3', fav: false, children: [] },
-    ],
-  },
-  {
-    name: 'folcder1',
-    fav: false,
-    children: [
-      { name: 'file1', fav: false, ext: 'pdf' },
-      { name: 'file2', fav: true, ext: 'doc' },
-      { name: 'file3', fav: true, ext: 'pdf' },
-      {
-        name: 'foldecr2',
-        fav: true,
-        children: [
-          { name: 'file1', fav: false, ext: 'pptx' },
-          { name: 'file2', fav: false, ext: 'txt' },
-        ],
-      },
-    ],
-  },
-  { name: 'filec1', fav: true, ext: 'pdf' },
-  {
-    name: 'folcder2',
-    fav: false,
-    children: [
-      { name: 'file1', fav: false, ext: 'pdf' },
-      { name: 'folder3', fav: false, children: [] },
-    ],
-  },
-  {
-    name: 'foldder1',
-    fav: false,
-    children: [
-      { name: 'file1', fav: false, ext: 'pdf' },
-      { name: 'file2', fav: true, ext: 'doc' },
-      { name: 'file3', fav: true, ext: 'pdf' },
-      {
-        name: 'foldder2',
-        fav: true,
-        children: [
-          { name: 'file1', fav: false, ext: 'pptx' },
-          { name: 'file2', fav: false, ext: 'txt' },
-        ],
-      },
-    ],
-  },
-  { name: 'filde1', fav: true, ext: 'pdf' },
-  {
-    name: 'foldder2',
-    fav: false,
-    children: [
-      { name: 'file1', fav: false, ext: 'pdf' },
-      { name: 'folder3', fav: false, children: [] },
-    ],
-  },
-  {
-    name: 'foleder1',
-    fav: false,
-    children: [
-      { name: 'file1', fav: false, ext: 'pdf' },
-      { name: 'file2', fav: true, ext: 'doc' },
-      { name: 'file3', fav: true, ext: 'pdf' },
-      {
-        name: 'folder2',
-        fav: true,
-        children: [
-          { name: 'file1', fav: false, ext: 'pptx' },
-          { name: 'file2', fav: false, ext: 'txt' },
-        ],
-      },
-    ],
-  },
-  { name: 'fiele1', fav: true, ext: 'pdf' },
-  {
-    name: 'foelder2',
-    fav: false,
-    children: [
-      { name: 'file1', fav: false, ext: 'pdf' },
-      { name: 'folder3', fav: false, children: [] },
-    ],
-  },
-  {
-    name: 'foflder1',
-    fav: false,
-    children: [
-      { name: 'file1', fav: false, ext: 'pdf' },
-      { name: 'file2', fav: true, ext: 'doc' },
-      { name: 'file3', fav: true, ext: 'pdf' },
-      {
-        name: 'folder2',
-        fav: true,
-        children: [
-          { name: 'file1', fav: false, ext: 'pptx' },
-          { name: 'file2', fav: false, ext: 'txt' },
-        ],
-      },
-    ],
-  },
-  { name: 'fifle1', fav: true, ext: 'pdf' },
-  {
-    name: 'foflder2',
-    fav: false,
-    children: [
-      { name: 'file1', fav: false, ext: 'pdf' },
-      { name: 'folder3', fav: false, children: [] },
-    ],
-  },
-  {
-    name: 'foldger1',
-    fav: false,
-    children: [
-      { name: 'file1', fav: false, ext: 'pdf' },
-      { name: 'file2', fav: true, ext: 'doc' },
-      { name: 'file3', fav: true, ext: 'pdf' },
-      {
-        name: 'folder2',
-        fav: true,
-        children: [
-          { name: 'file1', fav: false, ext: 'pptx' },
-          { name: 'file2', fav: false, ext: 'txt' },
-        ],
-      },
-    ],
-  },
-  { name: 'figle1', fav: true, ext: 'pdf' },
-  {
-    name: 'foglder2',
-    fav: false,
-    children: [
-      { name: 'file1', fav: false, ext: 'pdf' },
-      { name: 'folder3', fav: false, children: [] },
-    ],
-  },
-  { name: 'figdfle1', fav: true, ext: 'pdf' },
-  { name: 'figlae1', fav: true, ext: 'pdf' },
-  { name: 'figles1', fav: true, ext: 'pdf' },
-  { name: 'figlvde1', fav: true, ext: 'pdf' },
-  { name: 'figleds1', fav: true, ext: 'pdf' },
-  { name: 'figdle1', fav: true, ext: 'pdf' },
-  { name: 'figlse1', fav: true, ext: 'pdf' },
-  { name: 'figlse1', fav: true, ext: 'pdf' },
-  { name: 'fiagle1', fav: true, ext: 'pdf' },
-  { name: 'figdsle1', fav: true, ext: 'pdf' },
-  { name: 'fidgle1', fav: true, ext: 'pdf' },
-  { name: 'figlde1', fav: true, ext: 'pdf' },
-  { name: 'figldse1', fav: true, ext: 'pdf' },
-  { name: 'figsdle1', fav: true, ext: 'pdf' },
-  { name: 'figsdale1', fav: true, ext: 'pdf' },
-  { name: 'fisgle1', fav: true, ext: 'pdf' },
 ];
 
-fileSystem.loadJson(testJson);
-
-function onDrop({ node, dragNodesKeys }, fs, setFs) {
-  let parent = fs.getItem(node.key);
-  if (parent.ext) {
-    parent = parent.parent;
-  }
-  const [parName, parPath] = fs.pathProcess(parent.path);
-  dragNodesKeys.forEach((path) => {
-    const [itemName, itemPath] = fs.pathProcess(path);
-    fs.moveItem(path, `${parPath}/${itemName}`);
-  });
-  setFs(fs);
+function alphaSort(list) {
+  return list.sort((a, b) => (a.name > b.name ? 1 : -1));
 }
 
-const fIconSwitch = (ext: string) => {
-  switch (ext) {
-    case 'pdf':
-      return <FilePdfOutlined />;
-    case 'jpg':
-      return <FileJpgOutlined />;
-    default:
-      return <FileOutlined />;
-  }
-};
+const fs = new FileSystem();
+fs.loadJson(testJson);
+
+fs.sortFn = alphaSort;
 
 function App() {
   const [collapsed, setCollapsed] = useState(false);
   const [curPane, setCurPane] = useState('files');
-  const [fs, setFs] = useState(fileSystem);
+  const [treeData, setTreeData] = useState(fs.json);
 
-  const siderSwitch = (paneName: string) => {
+  function onDrop({ node, dragNodesKeys }) {
+    let parent = fs.getItem(node.key);
+    if (parent.ext) {
+      parent = parent.parent;
+    }
+    const path = dragNodesKeys[0];
+    fs.moveItem(path, parent.path);
+    setTreeData(fs.json);
+  }
+
+  function siderSwitch(paneName: string) {
     switch (paneName) {
       case 'search':
         return SearchSider(collapsed, setCollapsed);
@@ -343,7 +106,18 @@ function App() {
       default:
         return DocSider(collapsed, setCollapsed);
     }
-  };
+  }
+
+  function fIconSwitch(ext: string) {
+    switch (ext) {
+      case 'pdf':
+        return <FilePdfOutlined />;
+      case 'jpg':
+        return <FileJpgOutlined />;
+      default:
+        return <FileOutlined />;
+    }
+  }
 
   return (
     <Layout style={{ height: '100vh' }}>
@@ -430,10 +204,9 @@ function App() {
                 draggable
                 expandAction="doubleClick"
                 multiple
-                treeData={fs.json}
-                onDrop={({ node, dragNodesKeys }) =>
-                  onDrop({ node, dragNodesKeys }, fs, setFs)
-                }
+                treeData={treeData}
+                onDrop={onDrop}
+                defaultExpandAll
               />
             </TabPane>
             {openDocs.map((doc, idx) => (

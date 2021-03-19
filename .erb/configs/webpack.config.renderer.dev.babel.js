@@ -264,7 +264,7 @@ export default merge(baseConfig, {
     watchOptions: {
       aggregateTimeout: 300,
       ignored: /node_modules/,
-      poll: 100,
+      poll: 250,
     },
     historyApiFallback: {
       verbose: true,
