@@ -84,7 +84,7 @@ fs.sortFn = alphaSort;
 
 function App() {
   const [collapsed, setCollapsed] = useState(false);
-  const [curPane, setCurPane] = useState('files');
+  const [curPane, setCurPane] = useState('doc1');
   const [treeData, setTreeData] = useState(fs.json);
 
   function onDrop({ node, dragNodesKeys }) {
