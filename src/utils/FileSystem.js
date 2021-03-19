@@ -150,7 +150,7 @@ class Dir extends Item {
 }
 
 export default class FileSystem {
-  #self = new Dir('home');
+  #self = new Dir('Home');
 
   #sortFn = (a) => a;
 
