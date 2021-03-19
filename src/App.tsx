@@ -3,14 +3,11 @@
 import React, { useState } from 'react';
 import { Layout, Breadcrumb, Tabs, Card, Tree, Menu } from 'antd';
 import {
-  EditOutlined,
-  FileAddOutlined,
   FileJpgOutlined,
   FileOutlined,
   FilePdfOutlined,
   FolderOpenOutlined,
   FolderOutlined,
-  SearchOutlined,
 } from '@ant-design/icons';
 import DocViewer, { DocViewerRenderers } from 'react-doc-viewer';
 import AutoComp from './components/AutoComp';
@@ -87,7 +84,7 @@ fs.sortFn = alphaSort;
 
 function App() {
   const [collapsed, setCollapsed] = useState(false);
-  const [curPane, setCurPane] = useState('doc1');
+  const [curPane, setCurPane] = useState('0');
   const [treeData, setTreeData] = useState(fs.json);
 
   function onDrop({ node, dragNodesKeys }) {
@@ -166,15 +163,24 @@ function App() {
               style={{ height: '100%' }}
               forceRender
             >
-              <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <Card
+                  key={'main'}
+                  style={{
+                    margin: '8px',
+                    padding: '8px',
+                    height: '250px',
+                  }}
+                >
+                  <Meta title={'main'} description="placeholder" />
+                </Card>
                 {openDocs.map((doc) => (
                   <Card
                     key={doc.name}
                     style={{
-                      flexGrow: 1,
                       margin: '8px',
                       padding: '8px',
-                      minWidth: '25vw',
+                      height: '125px',
                     }}
                   >
                     <Meta title={doc.name} description="placeholder" />
@@ -213,12 +219,7 @@ function App() {
               />
             </TabPane>
             {openDocs.map((doc, idx) => (
-              <TabPane
-                tab={doc.name}
-                key={idx}
-                style={{ height: '100%' }}
-                // forceRender
-              >
+              <TabPane tab={doc.name} key={idx} style={{ height: '100%' }}>
                 <Breadcrumb style={{ marginBottom: '16px', marginTop: '-8px' }}>
                   {doc.uri.split('/').map((dir: string) => {
                     if (dir === '.') {
