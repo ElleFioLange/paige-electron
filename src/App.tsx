@@ -22,7 +22,6 @@ const { TabPane } = Tabs;
 const { Meta } = Card;
 const { DirectoryTree } = Tree;
 
-
 const openDocs = [
   {
     name: 'doc1',
@@ -120,7 +119,7 @@ function App() {
   }
 
   return (
-    <Layout style={{ height: '100vh' }}>
+    <Layout style={{ height: '100vh', position: 'relative' }}>
       <Header
         className="header"
         style={{
@@ -142,7 +141,7 @@ function App() {
           style={{ width: '60vw' }}
         />
       </Header>
-      <Layout>
+      <Layout style={{ height: '100%' }}>
         {siderSwitch(curPane)}
         <div style={{ width: '100%', height: '100%', position: 'relative' }}>
           <Tabs
