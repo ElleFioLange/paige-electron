@@ -1,23 +1,21 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useState } from 'react';
-import { Layout, Breadcrumb, Tabs, Card } from 'antd';
-// import DocViewer, { DocViewerRenderers } from 'react-doc-viewer';
-import AutoComp from './components/AutoComp';
+import React from 'react';
+import { Layout, Breadcrumb, Tabs, Card, AutoComplete, Input } from 'antd';
 
-import DocView from './components/DocView';
+import FileSystem, { ItemInit, Item } from './utils/FileSystem';
 
-import View from './components/View';
-import FileViewer from './components/FileViewer';
+import SiderSwitch from './temp/Siders';
+
+import StaticDocViewer from './temp/StaticDocViewer';
+import FileViewer from './temp/FileViewer';
 
 import './App.global.css';
 import logo from '../assets/icon.svg';
 
-const { Header } = Layout;
+const { Header, Sider, Content } = Layout;
 const { TabPane } = Tabs;
 const { Meta } = Card;
 
-const openDocs = [
+const test = [
   {
     name: 'doc1',
     uri: '../dev_root/test1.pdf',
@@ -38,154 +36,157 @@ const openDocs = [
   },
 ];
 
-const doc1 = {
-  name: 'doc1',
-  uri: '../dev_root/test1.pdf',
-  ftype: 'application/pdf',
-  fav: false,
+type Doc = {
+  name: string;
+  uri: string;
 };
 
-const doc2 = {
-  name: 'doc2',
-  uri: '../dev_root/test2.pdf',
-  ftype: 'application/pdf',
-  fav: true,
-};
+interface IAppProps {
+  username: string;
+  data: ItemInit[];
+}
 
-const doc3 = {
-  name: 'doc3',
-  uri: '../dev_root/test3.jpg',
-  ftype: 'image/jpeg',
-  fav: false,
-};
+interface IAppState {
+  openDocs: Doc[];
+  acOptions: { value: string }[];
+  activeTab: string;
+  sortFn: (list: Item[]) => Item[];
+}
 
-const testJson = [
-  {
-    name: 'a',
-    fav: false,
-    children: [
-      { name: 'b', fav: false, ext: 'pdf' },
-      { name: 'c', fav: true, ext: 'doc' },
-      { name: 'd', fav: true, ext: 'pdf' },
-      {
-        name: 'e',
-        fav: true,
-        children: [
-          { name: 'f', fav: false, ext: 'pptx' },
-          { name: 'g', fav: false, ext: 'txt' },
-        ],
-      },
-    ],
-  },
-  { name: 'h', fav: true, ext: 'pdf' },
-  {
-    name: 'i',
-    fav: false,
-    children: [
-      { name: 'j', fav: false, ext: 'pdf' },
-      { name: 'k', fav: false, children: [] },
-    ],
-  },
-];
+class App extends React.Component<IAppProps, IAppState> {
+  fs = new FileSystem();
 
-function App() {
-  const [openDocs, setOpenDocs] = useState([doc1, doc2, doc3]);
-
-  const test = () => {
-    const doc4 = {
-      name: 'doc4',
-      uri: '../dev_root/test4.pdf',
-      ftype: 'asdf',
-      fav: false,
+  constructor(props: IAppProps) {
+    super(props);
+    const { data } = this.props;
+    this.fs.load(data);
+    this.state = {
+      openDocs: test,
+      acOptions: [],
+      activeTab: 'search',
+      sortFn: this.alphaSort,
     };
-    setOpenDocs(openDocs.concat(doc4));
+  }
+
+  onSearch(searchText: string) {
+    const acOptions = !searchText
+      ? []
+      : [
+          { value: searchText },
+          { value: searchText.repeat(2) },
+          { value: searchText.repeat(3) },
+        ];
+    this.setState({ acOptions });
+  }
+
+  alphaSort = (list: Item[]) => {
+    return list.sort((a, b) => (a.name > b.name ? 1 : -1));
   };
 
-  return (
-    <Layout style={{ height: '100vh' }}>
-      <Header
-        className="header"
-        style={{
-          background: '#fff1b8',
-          padding: '0',
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      >
-        <img
-          src={logo}
-          alt="PAIGE Logo"
-          height="40px"
-          style={{ padding: '0 25px', cursor: 'pointer' }}
-          onClick={test}
-        />
-        <AutoComp
-          placeholder="Search all documents"
-          style={{ width: '60vw' }}
-        />
-      </Header>
-      <Layout>
-        <View>
-          <TabPane tab="Search" key="search" style={{ height: '100%' }}>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <Card
-                key={'main'}
-                style={{
-                  margin: '8px',
-                  padding: '8px',
-                  height: '250px',
-                }}
-              >
-                <Meta title={'main'} description="placeholder" />
-              </Card>
-              {openDocs.map((doc) => (
-                <Card
-                  key={doc.name}
-                  style={{
-                    margin: '8px',
-                    padding: '8px',
-                    height: '125px',
-                  }}
-                >
-                  <Meta title={doc.name} description="placeholder" />
-                </Card>
-              ))}
-            </div>
-          </TabPane>
-          <TabPane tab="Files" key="files" style={{ height: '100%' }}>
-            <FileViewer init={testJson} />
-          </TabPane>
-          {openDocs.map((doc, idx) => {
-            return (
-              <TabPane tab={doc.name} key={idx} style={{ height: '100%' }}>
-                <Breadcrumb style={{ marginBottom: '16px', marginTop: '-8px' }}>
-                  {doc.uri.split('/').map((dir: string) => {
-                    if (dir === '.') {
-                      return <Breadcrumb.Item key="home">Home</Breadcrumb.Item>;
-                    }
-                    return <Breadcrumb.Item key={dir}>{dir}</Breadcrumb.Item>;
-                  })}
-                </Breadcrumb>
-                <DocView doc={doc} />
-                  {/* documents={[doc]}
-                  pluginRenderers={DocViewerRenderers}
-                  config={{
-                    header: {
-                      disableHeader: true,
-                    },
-                  }}
-                  style={{
-                    boxShadow: 'inset -2vw -2vw 3vw #d4d4d4',
-                    borderRadius: '10px',
-                  }}
-                /> */}
+  render() {
+    const { openDocs, acOptions, activeTab, sortFn } = this.state;
+    return (
+      <Layout style={{ height: '100vh' }}>
+        <Header
+          className="header"
+          style={{
+            background: '#fff1b8',
+            padding: '0',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <img
+            src={logo}
+            alt="PAIGE Logo"
+            height="40px"
+            style={{ padding: '0 25px', cursor: 'pointer' }}
+          />
+          <AutoComplete
+            options={acOptions}
+            style={{ width: '60vw' }}
+            onSearch={(a) => {
+              this.onSearch(a);
+            }}
+          >
+            <Input.Search size="large" placeholder="Search" />
+          </AutoComplete>
+        </Header>
+        <Layout>
+          {SiderSwitch(activeTab)}
+          <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+            <Tabs
+              activeKey={activeTab}
+              onChange={(key) => this.setState({ activeTab: key })}
+              tabBarStyle={{
+                height: '49px',
+                backgroundColor: '#0c304d',
+                padding: '0 24px',
+                margin: '0',
+              }}
+              tabPosition="bottom"
+              style={{ position: 'absolute', width: '100%', height: '100%' }}
+            >
+              <TabPane tab="Search" key="search" style={{ height: '100%' }}>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <Card
+                    key="main"
+                    style={{
+                      margin: '8px',
+                      padding: '8px',
+                      height: '250px',
+                    }}
+                  >
+                    <Meta title="main" description="placeholder" />
+                  </Card>
+                  {openDocs.map((doc) => (
+                    <Card
+                      key={doc.name}
+                      style={{
+                        margin: '8px',
+                        padding: '8px',
+                        height: '125px',
+                      }}
+                    >
+                      <Meta title={doc.name} description="placeholder" />
+                    </Card>
+                  ))}
+                </div>
               </TabPane>
-            );
-          })}
-        </View>
+              <TabPane tab="Files" key="files" style={{ height: '100%' }}>
+                <FileViewer fs={this.fs} sortFn={sortFn} />
+              </TabPane>
+              {openDocs.map((doc) => {
+                return (
+                  <TabPane
+                    tab={doc.name}
+                    key={doc.name}
+                    style={{ height: '100%' }}
+                  >
+                    <Breadcrumb
+                      style={{ marginBottom: '16px', marginTop: '-8px' }}
+                    >
+                      {doc.uri.split('/').map((dir: string) => {
+                        if (dir === '.') {
+                          return (
+                            <Breadcrumb.Item key="home">Home</Breadcrumb.Item>
+                          );
+                        }
+                        return (
+                          <Breadcrumb.Item key={dir}>{dir}</Breadcrumb.Item>
+                        );
+                      })}
+                    </Breadcrumb>
+                    <StaticDocViewer doc={doc} />
+                  </TabPane>
+                );
+              })}
+            </Tabs>
+          </div>
+        </Layout>
       </Layout>
-    </Layout>
-  );
+    );
+  }
 }
 
 export default App;

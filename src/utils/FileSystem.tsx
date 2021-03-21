@@ -1,4 +1,3 @@
-/* eslint-disable class-methods-use-this */
 /* eslint-disable max-classes-per-file */
 
 const VALID_EXT = [
@@ -25,11 +24,11 @@ const VALID_EXT = [
 class Item {
   #name = '';
 
-  #parent = null;
+  #parent: Dir | null = null;
 
-  #fav;
+  #fav = false;
 
-  constructor(name, fav = false) {
+  constructor(name: string, fav = false) {
     this.name = name;
     this.fav = fav;
   }
@@ -79,7 +78,7 @@ class Item {
     this.#fav = newFav;
   }
 
-  get path() {
+  get path(): string {
     if (this.parent) {
       return `${this.parent.path}/${this.name}`;
     }
@@ -89,9 +88,9 @@ class Item {
 }
 
 class File extends Item {
-  #ext;
+  #ext = 'txt';
 
-  constructor(name, ext, fav = false) {
+  constructor(name: string, ext: string, fav = false) {
     super(name, fav);
     this.ext = ext;
   }
@@ -132,11 +131,11 @@ class Dir extends Item {
     return dirCopy;
   }
 
-  hasItem(itemName) {
+  hasItem(itemName: string) {
     return this.#children.has(itemName);
   }
 
-  insertItem(item) {
+  insertItem(item: Item) {
     if (this.hasItem(item.name)) return true;
 
     if (item === this) throw new Error('Folder cannot contain itself');
@@ -155,11 +154,11 @@ class Dir extends Item {
     return this.hasItem(item.name);
   }
 
-  getItem(itemName) {
+  getItem(itemName: string) {
     return this.#children.get(itemName);
   }
 
-  removeItem(itemName) {
+  removeItem(itemName: string) {
     const item = this.getItem(itemName);
 
     if (item) {
@@ -169,12 +168,29 @@ class Dir extends Item {
   }
 }
 
+type ItemInit = {
+  name: string;
+  fav: boolean;
+  children?: ItemInit[];
+  ext?: string;
+};
+
+type ItemData = {
+  title: string;
+  key: string;
+  fav: boolean;
+  ext?: string;
+  children?: ItemData[];
+};
+
+type SortFn = (list: Item[]) => Item[];
+
 export default class FileSystem {
   #self = new Dir('Home');
 
-  #sortFn = (a) => a;
+  #sortFn = (a: Item[]) => a;
 
-  set sortFn(fn) {
+  set sortFn(fn: (a: Item[]) => Item[]) {
     this.#sortFn = fn;
   }
 
@@ -182,11 +198,11 @@ export default class FileSystem {
     return this.#self;
   }
 
-  get json() {
-    return [this.#readJsonD(this.root)];
+  get data() {
+    return [this.#readDir(this.root)];
   }
 
-  getItem(path) {
+  getItem(path: string): File | Dir {
     const p = path.split('/').splice(1);
 
     let item = this.root;
@@ -198,90 +214,102 @@ export default class FileSystem {
     return item;
   }
 
-  insertItem = (item, parentPath) => {
+  insertItem = (item: Item, parentPath: string) => {
     const dir = this.getItem(parentPath);
-    dir.insertItem(item);
+    if (dir instanceof Dir) {
+      dir.insertItem(item);
+    }
   };
 
-  removeItem(path) {
+  removeItem(path: string) {
     const item = this.getItem(path);
-    item.parent.removeItem(item.name);
+    if (item.parent) {
+      item.parent.removeItem(item.name);
+    }
   }
 
-  moveItem(path, newParPath) {
+  moveItem(path: string, newParPath: string) {
     const item = this.getItem(path);
     const parent = this.getItem(newParPath);
 
-    item.parent.removeItem(item.name);
-    parent.insertItem(item);
+    if (item.parent) {
+      item.parent.removeItem(item.name);
+      if (parent instanceof Dir) parent.insertItem(item);
+    }
   }
 
-  renameItem(path, newName) {
+  renameItem(path: string, newName: string) {
     const item = this.getItem(path);
     const { parent } = item;
 
-    parent.removeItem(item.name);
-    item.name = newName;
-    parent.insertItem(item);
+    if (parent) {
+      parent.removeItem(item.name);
+      item.name = newName;
+      parent.insertItem(item);
+    }
   }
 
-  createFile(name, ext, parentPath) {
+  createFile(name: string, ext: string, parentPath: string) {
     const file = new File(name, ext);
 
     this.insertItem(file, parentPath);
   }
 
-  createDir(name, parentPath) {
+  createDir(name: string, parentPath: string) {
     const dir = new Dir(name);
 
     this.insertItem(dir, parentPath);
   }
 
-  #loadJsonF = (json) => {
-    return new File(json.name, json.ext, json.fav);
+  #loadFile = (data: ItemInit) => {
+    if (data.ext) return new File(data.name, data.ext, data.fav);
+    throw new Error('File init data must include name, ext, and fav');
   };
 
-  #loadJsonD = (json) => {
-    const dir = new Dir(json.name, json.fav);
-    json.children.forEach((child) => {
-      if (child.ext) {
-        const f = this.#loadJsonF(child);
-        dir.insertItem(f);
-      } else {
-        const d = this.#loadJsonD(child);
-        dir.insertItem(d);
-      }
-    });
+  #loadDir = (data: ItemInit) => {
+    const dir = new Dir(data.name, data.fav);
+    if (data.children) {
+      data.children.forEach((child) => {
+        if (child.ext) {
+          const f = this.#loadFile(child);
+          if (f) dir.insertItem(f);
+        } else {
+          const d = this.#loadDir(child);
+          dir.insertItem(d);
+        }
+      });
+    }
     return dir;
   };
 
-  loadJson(array) {
-    array.forEach((item) => {
+  load(init: ItemInit[]) {
+    init.forEach((item) => {
       if (item.ext) {
-        const f = this.#loadJsonF(item);
-        this.root.insertItem(f);
+        const f = this.#loadFile(item);
+        if (f) this.root.insertItem(f);
       } else {
-        const d = this.#loadJsonD(item);
+        const d = this.#loadDir(item);
         this.root.insertItem(d);
       }
     });
   }
 
-  #readJsonF = (file) => {
+  #readFile = (file: File): ItemData => {
     return { title: file.name, key: file.path, ext: file.ext, fav: file.fav };
   };
 
-  #readJsonD = (dir) => {
+  #readDir = (dir: Dir): ItemData => {
     return {
       title: dir.name,
       key: dir.path,
       fav: dir.fav,
       children: this.#sortFn(dir.content).map((item) => {
-        if (item.ext) {
-          return this.#readJsonF(item);
-        }
-        return this.#readJsonD(item);
+        if (item instanceof File) return this.#readFile(item);
+        if (item instanceof Dir) return this.#readDir(item);
+        throw new Error('Children must only be File data or Dir data');
       }),
     };
   };
 }
+
+export { Item, ItemInit, ItemData, File, Dir, SortFn };
