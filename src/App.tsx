@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React from 'react';
+import React, { useState } from 'react';
 import { Layout, Breadcrumb, Tabs, Card } from 'antd';
 // import DocViewer, { DocViewerRenderers } from 'react-doc-viewer';
 import AutoComp from './components/AutoComp';
@@ -38,6 +38,27 @@ const openDocs = [
   },
 ];
 
+const doc1 = {
+  name: 'doc1',
+  uri: '../dev_root/test1.pdf',
+  ftype: 'application/pdf',
+  fav: false,
+};
+
+const doc2 = {
+  name: 'doc2',
+  uri: '../dev_root/test2.pdf',
+  ftype: 'application/pdf',
+  fav: true,
+};
+
+const doc3 = {
+  name: 'doc3',
+  uri: '../dev_root/test3.jpg',
+  ftype: 'image/jpeg',
+  fav: false,
+};
+
 const testJson = [
   {
     name: 'a',
@@ -68,6 +89,18 @@ const testJson = [
 ];
 
 function App() {
+  const [openDocs, setOpenDocs] = useState([doc1, doc2, doc3]);
+
+  const test = () => {
+    const doc4 = {
+      name: 'doc4',
+      uri: '../dev_root/test4.pdf',
+      ftype: 'asdf',
+      fav: false,
+    };
+    setOpenDocs(openDocs.concat(doc4));
+  };
+
   return (
     <Layout style={{ height: '100vh' }}>
       <Header
@@ -80,11 +113,11 @@ function App() {
         }}
       >
         <img
-          id='test'
           src={logo}
           alt="PAIGE Logo"
           height="40px"
           style={{ padding: '0 25px', cursor: 'pointer' }}
+          onClick={test}
         />
         <AutoComp
           placeholder="Search all documents"
@@ -93,8 +126,7 @@ function App() {
       </Header>
       <Layout>
         <View>
-          <DocView />
-          {/* <TabPane tab="Search" key="search" style={{ height: '100%' }}>
+          <TabPane tab="Search" key="search" style={{ height: '100%' }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <Card
                 key={'main'}
@@ -123,31 +155,33 @@ function App() {
           <TabPane tab="Files" key="files" style={{ height: '100%' }}>
             <FileViewer init={testJson} />
           </TabPane>
-          {openDocs.map((doc, idx) => (
-            <TabPane tab={doc.name} key={idx} style={{ height: '100%' }}>
-              <Breadcrumb style={{ marginBottom: '16px', marginTop: '-8px' }}>
-                {doc.uri.split('/').map((dir: string) => {
-                  if (dir === '.') {
-                    return <Breadcrumb.Item key="home">Home</Breadcrumb.Item>;
-                  }
-                  return <Breadcrumb.Item key={dir}>{dir}</Breadcrumb.Item>;
-                })}
-              </Breadcrumb>
-              <DocViewer
-                documents={[doc]}
-                pluginRenderers={DocViewerRenderers}
-                config={{
-                  header: {
-                    disableHeader: true,
-                  },
-                }}
-                style={{
-                  boxShadow: 'inset -2vw -2vw 3vw #d4d4d4',
-                  borderRadius: '10px',
-                }}
-              />
-            </TabPane>
-          ))} */}
+          {openDocs.map((doc, idx) => {
+            return (
+              <TabPane tab={doc.name} key={idx} style={{ height: '100%' }}>
+                <Breadcrumb style={{ marginBottom: '16px', marginTop: '-8px' }}>
+                  {doc.uri.split('/').map((dir: string) => {
+                    if (dir === '.') {
+                      return <Breadcrumb.Item key="home">Home</Breadcrumb.Item>;
+                    }
+                    return <Breadcrumb.Item key={dir}>{dir}</Breadcrumb.Item>;
+                  })}
+                </Breadcrumb>
+                <DocView doc={doc} />
+                  {/* documents={[doc]}
+                  pluginRenderers={DocViewerRenderers}
+                  config={{
+                    header: {
+                      disableHeader: true,
+                    },
+                  }}
+                  style={{
+                    boxShadow: 'inset -2vw -2vw 3vw #d4d4d4',
+                    borderRadius: '10px',
+                  }}
+                /> */}
+              </TabPane>
+            );
+          })}
         </View>
       </Layout>
     </Layout>
