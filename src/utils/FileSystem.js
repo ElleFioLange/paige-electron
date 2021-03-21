@@ -1,5 +1,27 @@
 /* eslint-disable class-methods-use-this */
 /* eslint-disable max-classes-per-file */
+
+const VALID_EXT = [
+  'pdf',
+  'jpg',
+  'doc',
+  'docx',
+  'ppt',
+  'pptx',
+  'pptm',
+  'txt',
+  'rtf',
+  'xls',
+  'xlt',
+  'xltm',
+  'xltx',
+  'xlw',
+  'xlsx',
+  'xlsm',
+  'xlsb',
+  'xlst',
+];
+
 class Item {
   #name = '';
 
@@ -19,12 +41,12 @@ class Item {
   set name(newName) {
     if (this.parent && this.parent.hasItem(newName)) {
       throw new Error(
-        `Item with name ${newName} already exists in this directory`
+        `Item with name ${newName} already exists in this folder`
       );
     }
 
     if (!newName || typeof newName !== 'string' || !newName.trim().length) {
-      throw new Error('Item name must be a non empty string');
+      throw new Error('Item name cannot be empty');
     }
 
     this.#name = newName.trim();
@@ -66,8 +88,6 @@ class Item {
   }
 }
 
-const VALID_EXT = ['pdf', 'jpg', 'doc', 'docx', 'ppt', 'pptx', 'txt'];
-
 class File extends Item {
   #ext;
 
@@ -89,7 +109,7 @@ class File extends Item {
   }
 
   get copy() {
-    return new File(`${this.name} copy`);
+    return new File(`${this.name} copy`, this.ext);
   }
 }
 
@@ -119,7 +139,7 @@ class Dir extends Item {
   insertItem(item) {
     if (this.hasItem(item.name)) return true;
 
-    if (item === this) throw new Error('Directory cannot contain itself');
+    if (item === this) throw new Error('Folder cannot contain itself');
 
     let { parent } = this;
     while (parent !== null) {
@@ -265,12 +285,3 @@ export default class FileSystem {
     };
   };
 }
-
-const fs = new FileSystem();
-
-fs.createFile('foo', 'pdf', 'root');
-console.log(fs.root.content);
-fs.createDir('bar', 'root');
-fs.moveItem('root/foo', 'root/bar');
-console.log(fs.root.content);
-console.log(fs.root.content[0].content[0].name);

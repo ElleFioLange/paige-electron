@@ -2,8 +2,10 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from 'react';
 import { Layout, Breadcrumb, Tabs, Card } from 'antd';
-import DocViewer, { DocViewerRenderers } from 'react-doc-viewer';
+// import DocViewer, { DocViewerRenderers } from 'react-doc-viewer';
 import AutoComp from './components/AutoComp';
+
+import DocView from './components/DocView';
 
 import View from './components/View';
 import FileViewer from './components/FileViewer';
@@ -78,6 +80,7 @@ function App() {
         }}
       >
         <img
+          id='test'
           src={logo}
           alt="PAIGE Logo"
           height="40px"
@@ -90,7 +93,8 @@ function App() {
       </Header>
       <Layout>
         <View>
-          <TabPane tab="Search" key="search" style={{ height: '100%' }}>
+          <DocView />
+          {/* <TabPane tab="Search" key="search" style={{ height: '100%' }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <Card
                 key={'main'}
@@ -143,7 +147,7 @@ function App() {
                 }}
               />
             </TabPane>
-          ))}
+          ))} */}
         </View>
       </Layout>
     </Layout>
