@@ -1,5 +1,5 @@
-const test = false;
+const test = [1, 2, 3, 4, 5];
 
-if (test === null) {
-  console.log('hi');
-}
+test.splice(test.indexOf(3), 1);
+
+console.log(test);

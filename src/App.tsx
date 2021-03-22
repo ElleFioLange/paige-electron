@@ -3,15 +3,15 @@ import { Layout, Breadcrumb, Tabs, Card, AutoComplete, Input } from 'antd';
 
 import FileSystem, { ItemInit, Item } from './utils/FileSystem';
 
-import SiderSwitch from './temp/Siders';
+import SiderSwitch from './components/Siders';
 
-import StaticDocViewer from './temp/StaticDocViewer';
-import FileViewer from './temp/FileViewer';
+import StaticDocViewer from './components/StaticDocViewer';
+import FileViewer from './components/FileViewer';
 
 import './App.global.css';
 import logo from '../assets/icon.svg';
 
-const { Header, Sider, Content } = Layout;
+const { Header } = Layout;
 const { TabPane } = Tabs;
 const { Meta } = Card;
 
@@ -51,6 +51,8 @@ interface IAppState {
   acOptions: { value: string }[];
   activeTab: string;
   sortFn: (list: Item[]) => Item[];
+  favs: Item[];
+  groups: string[];
 }
 
 class App extends React.Component<IAppProps, IAppState> {
@@ -65,6 +67,8 @@ class App extends React.Component<IAppProps, IAppState> {
       acOptions: [],
       activeTab: 'search',
       sortFn: this.alphaSort,
+      favs: this.fs.favs,
+      groups: ['hello', 'test', 'oh boy'],
     };
   }
 
@@ -83,8 +87,12 @@ class App extends React.Component<IAppProps, IAppState> {
     return list.sort((a, b) => (a.name > b.name ? 1 : -1));
   };
 
+  refreshFavs = () => this.setState({ favs: this.fs.favs });
+
   render() {
-    const { openDocs, acOptions, activeTab, sortFn } = this.state;
+    const { openDocs, acOptions, activeTab, sortFn, favs, groups } = this.state;
+    this.fs.sortFn = sortFn;
+    console.log(this.fs.favs);
     return (
       <Layout style={{ height: '100vh' }}>
         <Header
@@ -113,7 +121,7 @@ class App extends React.Component<IAppProps, IAppState> {
           </AutoComplete>
         </Header>
         <Layout>
-          {SiderSwitch(activeTab)}
+          {SiderSwitch(activeTab, { favs, groups })}
           <div style={{ width: '100%', height: '100%', position: 'relative' }}>
             <Tabs
               activeKey={activeTab}
@@ -154,7 +162,11 @@ class App extends React.Component<IAppProps, IAppState> {
                 </div>
               </TabPane>
               <TabPane tab="Files" key="files" style={{ height: '100%' }}>
-                <FileViewer fs={this.fs} sortFn={sortFn} />
+                <FileViewer
+                  fs={this.fs}
+                  sortFn={sortFn}
+                  refreshFavs={this.refreshFavs}
+                />
               </TabPane>
               {openDocs.map((doc) => {
                 return (

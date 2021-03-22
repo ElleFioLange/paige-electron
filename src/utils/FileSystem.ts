@@ -190,7 +190,9 @@ export default class FileSystem {
 
   #sortFn = (a: Item[]) => a;
 
-  set sortFn(fn: (a: Item[]) => Item[]) {
+  favs: Item[] = [];
+
+  set sortFn(fn: (list: Item[]) => Item[]) {
     this.#sortFn = fn;
   }
 
@@ -249,6 +251,16 @@ export default class FileSystem {
     }
   }
 
+  toggleFav(item: Item) {
+    if (this.favs.includes(item)) {
+      item.fav = false;
+      this.favs.splice(this.favs.indexOf(item), 1);
+    } else {
+      item.fav = true;
+      this.favs.push(item);
+    }
+  }
+
   createFile(name: string, ext: string, parentPath: string) {
     const file = new File(name, ext);
 
@@ -262,7 +274,11 @@ export default class FileSystem {
   }
 
   #loadFile = (data: ItemInit) => {
-    if (data.ext) return new File(data.name, data.ext, data.fav);
+    if (data.ext) {
+      const f = new File(data.name, data.ext, data.fav);
+      if (f.fav) this.favs.push(f);
+      return f;
+    }
     throw new Error('File init data must include name, ext, and fav');
   };
 
@@ -279,6 +295,7 @@ export default class FileSystem {
         }
       });
     }
+    if (dir.fav) this.favs.push(dir);
     return dir;
   };
 

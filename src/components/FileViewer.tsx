@@ -18,6 +18,8 @@ import {
   FileTextTwoTone,
   FileExcelTwoTone,
   FileTwoTone,
+  FolderTwoTone,
+  FolderOpenTwoTone,
 } from '@ant-design/icons';
 import FileSystem, { ItemData, File, Dir, SortFn } from '../utils/FileSystem';
 
@@ -27,6 +29,7 @@ const { Sider, Content } = Layout;
 interface IFileViewerProps {
   fs: FileSystem;
   sortFn: SortFn;
+  refreshFavs: () => void;
 }
 
 interface IFileViewerState {
@@ -112,10 +115,12 @@ export default class FileViewer extends React.Component<
       name: 'Favorite',
       fn: () => {
         const { selectedKeys } = this.state;
+        const { refreshFavs } = this.props;
         selectedKeys.forEach((key) => {
           const item = this.fs.getItem(key);
-          item.fav = !item.fav;
+          this.fs.toggleFav(item);
           this.setState({ treeData: this.fs.data });
+          refreshFavs();
         });
       },
     },
@@ -261,11 +266,14 @@ export default class FileViewer extends React.Component<
               if (props.data.ext) {
                 return this.fIconSwitch(props.data.ext, props.data.fav);
               }
-              return props.expanded ? (
-                <FolderOpenOutlined />
-              ) : (
-                <FolderOutlined />
-              );
+              if (props.expanded) {
+                return props.data.fav ? (
+                  <FolderOpenTwoTone />
+                ) : (
+                  <FolderOpenOutlined />
+                );
+              }
+              return props.data.fav ? <FolderTwoTone /> : <FolderOutlined />;
             }}
             style={{
               background: '#fffef0',
